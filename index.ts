@@ -35,7 +35,20 @@ function count(mentions) {
   return count;
 }
 
-console.log(count(fakeMentions));
+// console.log(count(fakeMentions));
 
 // Order
+
+function sort(counted) {
+  const entries = []
+
+  for (let prop in counted) {
+    entries.push([prop, counted[prop]])
+  }
+
+  const sorted = entries.sort((a, b) => { return b[1] - a[1] })
+  console.log(sorted);
+}
+
+sort(count(fakeMentions));
 
