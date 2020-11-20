@@ -1,54 +1,86 @@
-// Read the Instagram page
-// Get the comments
+const puppeteer = require('puppeteer');
 
-const fakeMentions = ['@joaovieira_98',
-  '@nasa',
-  '@cinema.magic',
-  '@filosofia__da__arte',
-  '@manualdoabc',
-  '@corinthians',
-  '@cinematobrasil',
-  '@adventurers',
-  '@umfilmemedisse',
-  '@faculdadeftt',
-  '@triptaminaworld',
-  '@charliebrownjr',
-  '@thegreatplanet',
-  '@nfl',
-  '@corinthians',
-  '@kingjames',
-  '@cristiano',
-  '@faculdadeftt',
-  '@teslamotors',
-  '@natgeo',
-  '@futurism',
-  '@intel',
-  '@spacex',
-  '@fi'
-]
+// Read the Instagram page
+
+async function start() {
+
+  async function loadMore(page, selector) {
+    const moreButton = await page.$(selector);
+    if (moreButton) {
+      console.log("More");
+      await moreButton.click()
+      await page.waitFor(selector, { timeout: 5000 }).catch(() => { console.log("timeout") })
+      await loadMore(page, selector)
+    }
+  }
+
+  // Get the comments
+
+  async function getComments(page, selector) {
+    const comments = await page.$$eval(selector, users => users.map(user => {
+      return user.innerText;
+    }));
+    return comments;
+  }
+
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto('https://www.instagram.com/p/CH02abtp3vi/');
+
+  await loadMore(page, '.dCJp8');
+  const comments = await getComments(page, '.ZIAjV');
+
+  console.log(comments);
+
+}
+
+// const fakeMentions = ['@joaovieira_98',
+//   '@nasa',
+//   '@cinema.magic',
+//   '@filosofia__da__arte',
+//   '@manualdoabc',
+//   '@corinthians',
+//   '@cinematobrasil',
+//   '@adventurers',
+//   '@umfilmemedisse',
+//   '@faculdadeftt',
+//   '@triptaminaworld',
+//   '@charliebrownjr',
+//   '@thegreatplanet',
+//   '@nfl',
+//   '@corinthians',
+//   '@kingjames',
+//   '@cristiano',
+//   '@faculdadeftt',
+//   '@teslamotors',
+//   '@natgeo',
+//   '@futurism',
+//   '@intel',
+//   '@spacex',
+//   '@fi'
+// ];
 // Count repeated mentions
 
 function count(mentions) {
-  const count = {}
+  const count = {};
 
   mentions.forEach(mention => count[mention] = (count[mention] || 0) + 1);
   return count;
 }
 
-// console.log(count(fakeMentions));
-
 // Order
 
 function sort(counted) {
-  const entries = []
+  const entries = [];
 
   for (let prop in counted) {
-    entries.push([prop, counted[prop]])
-  }
+    entries.push([prop, counted[prop]]);
+  };
 
-  const sorted = entries.sort((a, b) => { return b[1] - a[1] })
+  const sorted = entries.sort((a, b) => { return b[1] - a[1] });
   console.log(sorted);
-}
+};
 
-sort(count(fakeMentions));
+// sort(count(fakeMentions));
+start();
 
