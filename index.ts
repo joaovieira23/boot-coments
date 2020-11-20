@@ -29,8 +29,11 @@ async function start() {
 
   await loadMore(page, '.dCJp8');
   const comments = await getComments(page, '.ZIAjV');
+  const counted = count(comments);
+  const sorted = sort(counted);
+  sorted.forEach(comment => { console.log(comment) });
 
-  console.log(comments);
+  await browser.close();
 
 }
 
@@ -78,7 +81,7 @@ function sort(counted) {
   };
 
   const sorted = entries.sort((a, b) => { return b[1] - a[1] });
-  console.log(sorted);
+  return sorted;
 };
 
 // sort(count(fakeMentions));
